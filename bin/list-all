@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+#;
+# get_all_versions()
+# get all tags info from github repository of dhall-lang/dhall-haskell
+# alternative `sort -V` -> https://github.com/asdf-vm/asdf/blob/242d132afbf710fe3c7ec23c68cec7bdd2c78ab5/lib/utils.sh#L44
+# @return multiline all tags info
+#"
+get_all_versions() {
+  git ls-remote --refs --tags https://github.com/dhall-lang/dhall-haskell.git \
+  | cut -d/ -f3-                                                              \
+  | LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n
+}
+
+[ "$(uname)" = Darwin ] && (get_all_versions | tail -n +25 | xargs) && exit # macos can download binaries of versions 1.25 ~
+get_all_versions | xargs
