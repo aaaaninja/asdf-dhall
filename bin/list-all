@@ -9,7 +9,7 @@
 get_all_versions() {
   git ls-remote --refs --tags https://github.com/dhall-lang/dhall-haskell.git \
   | cut -d/ -f3-                                                              \
-  | LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n
+  | LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n # that means `sort -V`
 }
 
 [ "$(uname)" = Darwin ] && (get_all_versions | tail -n +25 | xargs) && exit # macos can download binaries of versions 1.25 ~
