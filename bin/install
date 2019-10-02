@@ -15,4 +15,4 @@ get_download_urls() {
 }
 
 [ "$(uname)" = Darwin ] && os_arch=macos || os_arch=linux
-get_download_urls "$ASDF_INSTALL_VERSION" "$os_arch" | xargs -P"$ASDF_CONCURRENCY" -I{} sh -c "curl -fL {} | tar jxf  - -C $ASDF_INSTALL_PATH"
+get_download_urls "$ASDF_INSTALL_VERSION" "$os_arch" | xargs -P"$ASDF_CONCURRENCY" -I{} sh -c "curl -fL {} | tar jx -C $ASDF_INSTALL_PATH"
