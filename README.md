@@ -7,9 +7,11 @@ asdf-dhall
 Install
 -------
 
-!!! Warning
-    This plugin needs `curl` to be installed.
-
 ```sh
-asdf plugin-add dhall https://github.com/aaaaninja/asdf-dhall.git
+asdf plugin add dhall
 ```
+
+### Dependencies
+
+- `git`
+- `curl`
