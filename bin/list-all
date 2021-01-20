@@ -3,14 +3,27 @@
 #;
 # get_all_versions()
 # get all tags info from github repository of dhall-lang/dhall-haskell
-# alternative `sort -V` -> https://github.com/asdf-vm/asdf/blob/242d132afbf710fe3c7ec23c68cec7bdd2c78ab5/lib/utils.sh#L44
 # @return multiline all tags info
 #"
 get_all_versions() {
-  git ls-remote --refs --tags https://github.com/dhall-lang/dhall-haskell.git \
-  | cut -d/ -f3-                                                              \
-  | LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n # that means `sort -V`
+  git ls-remote --tags https://github.com/dhall-lang/dhall-haskell.git | cut -d/ -f3-
 }
 
-[ "$(uname)" = Darwin ] && (get_all_versions | tail -n +25 | xargs) && exit # macos can download binaries of versions 1.25 ~
-get_all_versions | xargs
+#;
+# sort_versions()
+# sort semantic version strings in ascending order
+# alternative to `sort -V`
+# https://github.com/asdf-vm/asdf/blob/242d132afbf710fe3c7ec23c68cec7bdd2c78ab5/lib/utils.sh#L44
+# @return multiline sorted tags
+#"
+sort_versions() {
+  LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n # that means `sort -V`
+}
+
+if [ "$(uname)" = Darwin ]
+then
+  # macos can download binaries of versions 1.25 ~
+  echo `get_all_versions | sort_versions | tail -n +25`
+else
+  echo `get_all_versions | sort_versions`
+fi

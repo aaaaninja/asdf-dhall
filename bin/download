@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+#;
+# get_download_urls()
+# get download urls from releases page of dhall-lang/dhall-haskell
+#
+# also used in bin/install for backwards compat. update both places
+#
+# @param version: version of dhall
+# @param os_arch: os architecture...linux, macos
+# @return multiline urls
+#"
+get_download_urls() {
+  curl -sSfL "https://api.github.com/repos/dhall-lang/dhall-haskell/releases/tags/$1" \
+  | grep 'download_url' \
+  | grep "$2" \
+  | cut -d: -f2-
+}
+
+# also used in bin/install for backwards compat. update both places
+[ "$(uname)" = Darwin ] && os_arch=macos || os_arch=linux
+[ -z "$ASDF_CONCURRENCY" ] && concurrency=1 || concurrency="$ASDF_CONCURRENCY"
+
+get_download_urls "$ASDF_INSTALL_VERSION" "$os_arch" \
+| xargs -P"$concurrency" -I{} sh -c "curl -sSfL {} | tar -jx -C $ASDF_DOWNLOAD_PATH"

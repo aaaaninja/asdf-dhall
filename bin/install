@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 
-#;
-# get_download_urls()
-# get download urls from releases page of dhall-lang/dhall-haskell
-# @param version: version of dhall
-# @param os_arch: os architecture...linux, macos
-# @return multiline urls
-#"
+# copied from bin/download, update both places
 get_download_urls() {
-  curl -fL "https://api.github.com/repos/dhall-lang/dhall-haskell/releases/tags/$1" \
-  | grep download_url                                                               \
-  | grep "$2"                                                                       \
+  curl -sSfL "https://api.github.com/repos/dhall-lang/dhall-haskell/releases/tags/$1" \
+  | grep 'download_url' \
+  | grep "$2" \
   | cut -d: -f2-
 }
 
+# copied from bin/download, update both places
 [ "$(uname)" = Darwin ] && os_arch=macos || os_arch=linux
-get_download_urls "$ASDF_INSTALL_VERSION" "$os_arch" | xargs -P"$ASDF_CONCURRENCY" -I{} sh -c "curl -fL {} | tar jx -C $ASDF_INSTALL_PATH"
+[ -z "$ASDF_CONCURRENCY" ] && concurrency=1 || concurrency="$ASDF_CONCURRENCY"
+
+if [ -z "$ASDF_DOWNLOAD_PATH" ]
+then
+  # Old asdf version, must download first
+  get_download_urls "$ASDF_INSTALL_VERSION" "$os_arch" \
+  | xargs -P"$concurrency" -I{} sh -c "curl -sSfL {} | tar -jx -C $ASDF_INSTALL_PATH"
+else
+  # New asdf version, download is already done
+  cp -R "$ASDF_DOWNLOAD_PATH/" "$ASDF_INSTALL_PATH"
+fi
