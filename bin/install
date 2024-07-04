@@ -10,7 +10,7 @@
 get_download_urls() {
   curl -fL "https://api.github.com/repos/dhall-lang/dhall-haskell/releases/tags/$1" \
   | grep download_url                                                               \
-  | grep "$2"                                                                       \
+  | grep -i "$2"                                                                       \
   | cut -d: -f2-
 }
 
